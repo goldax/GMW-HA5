@@ -1,0 +1,54 @@
+<link rel="import" href="bower_components/polymer/polymer.html">
+<link rel="import" href="bower_components/paper-dialog/paper-dialog.html">
+
+<link rel="import" href="file-view.html">
+
+<dom-module id="save-dialog">
+    <template>
+        <style>
+            .file {
+                font-style: italic;
+            }
+
+            .file::before,
+            .file::after {
+                content: "\"";
+            }
+
+            .files {
+                display: flex;
+                margin: 24px 0;
+            }
+
+            file-view {
+                flex-grow: 1;
+            }
+        </style>
+
+        <paper-dialog opened modal>
+            <h2>Dateikonflikt</h2>
+            <div>
+                Es existiert bereits eine Datei mit dem Namen <span class="file">[[name]]</span>.
+                <div class="files">
+                    <file-view name="[[name]]" icon="fileicon.svg"></file-view>
+                    <file-view name="[[name]]" icon="fileicon_original.svg"></file-view>
+                </div>
+            </div>
+        </paper-dialog>
+    </template>
+
+    <script>
+        "use strict";
+
+        Polymer({
+            is: "save-dialog",
+
+            properties: {
+                name: {
+                    type: String,
+                    value: "test.pdf"
+                }
+            }
+        });
+    </script>
+</dom-module>

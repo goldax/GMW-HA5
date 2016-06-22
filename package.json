@@ -1,0 +1,13 @@
+{
+    "name": "gmw-ha5",
+    "version": "1.0.0",
+    "author": ["Joshua H.", "Clemens D."],
+
+    "dependencies": {
+        "bower": "1.7.9"
+    },
+
+    "scripts": {
+        "postinstall": "./node_modules/.bin/bower install"
+    }
+}

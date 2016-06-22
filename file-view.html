@@ -1,0 +1,39 @@
+<link rel="import" href="bower_components/polymer/polymer.html">
+
+<dom-module id="file-view">
+    <template>
+        <style>
+            div {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                text-align: center;
+            }
+
+            img {
+                margin-bottom: 8px;
+            }
+        </style>
+        <div>
+            <img src="[[icon]]" alt="" /> [[name]]
+        </div>
+
+    </template>
+
+    <script>
+        "use strict";
+
+        Polymer({
+            is: "file-view",
+
+            properties: {
+                name: {
+                    type: String
+                },
+                icon: {
+                    type: String
+                }
+            }
+        });
+    </script>
+</dom-module>
