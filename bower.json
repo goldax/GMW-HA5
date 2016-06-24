@@ -1,10 +1,11 @@
 {
-    "name": "gmw-ha5",
-    "version": "1.0.0",
-    "author": ["Joshua H.", "Clemens D."],
+	"name": "gmw-ha5",
+	"version": "1.0.0",
+	"author": ["Joshua H.", "Clemens D."],
 
-    "dependencies": {
-        "polymer": "Polymer/polymer#1.5.0",
-        "paper-elements": "PolymerElements/paper-elements#1.0.7"
-    }
+	"dependencies": {
+		"polymer": "Polymer/polymer#1.5.0",
+		"iron-elements": "PolymerElements/iron-elements#1.0.10",
+		"paper-elements": "PolymerElements/paper-elements#1.0.7"
+	}
 }
