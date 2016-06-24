@@ -29,13 +29,8 @@
                 margin-top: -5px;
             }
 
-            .filename {
+            .filepath {
                 font-style: italic;
-            }
-
-            .filename::before,
-            .filename::after {
-                content: "\"";
             }
 
             #files {
@@ -88,7 +83,7 @@
         <paper-dialog id="dialog" opened modal>
             <h2><iron-icon icon="warning"></iron-icon> Dateikonflikt</h2>
             <div>
-                Es existiert bereits eine Datei mit dem Namen <span class="filename">[[name]]</span>.
+                Es existiert bereits eine Datei an der Stelle <span class="filepath">[[path]]</span>.
                 <div id="files">
                     <div class="file new">
                         <span>Neu</span>
@@ -101,7 +96,7 @@
                 </div>
             </div>
             <div class="buttons">
-                <paper-button id="rename" focused>Anderen Namen wählen</paper-button>
+                <paper-button id="rename">Anderen Namen wählen</paper-button>
                 <paper-button id="both">Beide behalten</paper-button>
                 <paper-button id="replace">Alte Datei überschreiben</paper-button>
                 <paper-button id="cancel">Abbrechen</paper-button>
@@ -116,11 +111,16 @@
             is: "save-dialog",
 
             properties: {
+                path: {
+                    type: String
+                },
+
                 name: {
-                    type: String,
-                    value: "test.pdf"
+                    computed: "_computeName(path)"
                 }
-            }
+            },
+
+            _computeName: path => path.slice(path.lastIndexOf("/") + 1)
         });
     </script>
 </dom-module>
