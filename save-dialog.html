@@ -2,13 +2,31 @@
 <link rel="import" href="bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="bower_components/paper-button/paper-button.html">
 
+<link rel="import" href="bower_components/iron-icons/iron-icons.html">
+
 <link rel="import" href="file-view.html">
 
 <dom-module id="save-dialog">
     <template>
         <style>
-            paper-dialog {
+            :host {
+                cursor: default;
+                --violet: #9b59b6;
+                --green: #1abb47;
+                --blue: #1a33bc;
+                --red: #bb241a;
+            }
+
+            #dialog {
                 border-radius: 2px;
+            }
+
+            h2 {
+                color: var(--red);
+            }
+
+            h2 iron-icon {
+                margin-top: -5px;
             }
 
             .filename {
@@ -35,16 +53,40 @@
             }
 
             .file.new span {
-                color: #9b59b6;
+                color: var(--green);
             }
 
             .file.old span {
-                color: #1abc9c;
+                color: var(--red);
+            }
+
+            #dialog > .buttons {
+                padding: 8px;
+                padding-top: 0;
+                flex-wrap: wrap;
+                width: 516px;
+            }
+
+            paper-button {
+                color: var(--blue);
+                flex-grow: 1;
+                width: 250px;
+                box-sizing: border-box;
+                margin: 8px 4px 0 4px;
+                border: 1px solid currentColor;
+            }
+
+            #replace {
+                color: var(--green);
+            }
+
+            #cancel {
+                color: var(--red);
             }
         </style>
 
-        <paper-dialog opened modal>
-            <h2>Dateikonflikt</h2>
+        <paper-dialog id="dialog" opened modal>
+            <h2><iron-icon icon="warning"></iron-icon> Dateikonflikt</h2>
             <div>
                 Es existiert bereits eine Datei mit dem Namen <span class="filename">[[name]]</span>.
                 <div id="files">
@@ -59,9 +101,9 @@
                 </div>
             </div>
             <div class="buttons">
-                <paper-button id="cancel">Anderen Namen wählen</paper-button>
-                <paper-button id="cancel">Original überschreiben</paper-button>
-                <paper-button id="cancel">Beide behalten</paper-button>
+                <paper-button id="rename" focused>Anderen Namen wählen</paper-button>
+                <paper-button id="both">Beide behalten</paper-button>
+                <paper-button id="replace">Alte Datei überschreiben</paper-button>
                 <paper-button id="cancel">Abbrechen</paper-button>
             </div>
         </paper-dialog>
