@@ -7,20 +7,36 @@
                 display: block;
             }
 
-            div {
+            #container {
                 display: flex;
                 flex-direction: column;
-                justify-content: center;
-                text-align: center;
+                align-items: center;
+                min-width: 64px;
             }
 
             img {
                 margin-bottom: 8px;
             }
+
+            #box {
+                display: none;
+                width: 64px;
+                height: 20px;
+                background-color: #212121;
+                text-align: center;
+                color: #ffffff;
+                border-radius: 2px;
+            }
+
+            #box[shown] {
+                display: inline-block;
+            }
         </style>
 
-        <div>
-            <img src="[[icon]]" alt="" /> [[name]]
+        <div id="container">
+            <img src="[[icon]]" alt="" />
+            <div id="box" shown$="[[_showBox]]">?</div>
+            [[name]]
         </div>
     </template>
 
@@ -32,11 +48,21 @@
 
             properties: {
                 name: {
-                    type: String
+                    type: String,
+                    observer: "_onNameChanged"
                 },
                 icon: {
                     type: String
+                },
+
+                _showBox: {
+                    type: Boolean,
+                    value: false
                 }
+            },
+
+            _onNameChanged(name) {
+                this._showBox = name === "";
             }
         });
     </script>

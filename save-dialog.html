@@ -9,6 +9,10 @@
 <dom-module id="save-dialog">
     <template>
         <style>
+            * {
+                box-sizing: border-box;
+            }
+
             :host {
                 cursor: default;
                 --violet: #9b59b6;
@@ -19,6 +23,7 @@
 
             #dialog {
                 border-radius: 2px;
+                overflow: hidden;
             }
 
             h2 {
@@ -39,8 +44,14 @@
             }
 
             .file {
+                width: 50%;
                 flex-grow: 1;
+                flex-shrink: 1;
                 text-align: center;
+            }
+
+            .file, .file > span {
+                transition: 0.4s all ease;
             }
 
             .file file-view {
@@ -56,7 +67,8 @@
             }
 
             #dialog > .buttons {
-                padding: 8px 12px;
+                padding: 0;
+                margin: 8px 12px;
                 flex-wrap: wrap;
                 width: 516px;
             }
@@ -65,9 +77,22 @@
                 color: var(--blue);
                 flex-grow: 1;
                 width: 250px;
-                box-sizing: border-box;
                 margin: 0 4px 8px 4px;
                 border: 1px solid currentColor;
+                transition: 0.2s all ease !important;
+                will-change: opacity box-shadow;
+            }
+
+            .buttons[previewed] paper-button {
+                opacity: 0.3;
+            }
+
+            .buttons[previewed=rename] #rename,
+            .buttons[previewed=both] #both,
+            .buttons[previewed=replace] #replace,
+            .buttons[previewed=cancel] #cancel {
+                opacity: 1;
+                @apply(--shadow-elevation-2dp);
             }
 
             #replace {
@@ -77,24 +102,41 @@
             #cancel {
                 color: var(--red);
             }
+
+            #files[previewed=replace] .file.new {
+                width: 100%;
+            }
+
+            #files[previewed=replace] .file.old {
+                width: 0;
+                opacity: 0;
+            }
+
+            #files[previewed=cancel] .file.new {
+                opacity: 0.5;
+            }
+
+            #files[previewed=cancel] .file.new file-view {
+                font-style: italic;
+            }
         </style>
 
         <paper-dialog id="dialog" opened modal>
             <h2><iron-icon icon="warning"></iron-icon> Dateikonflikt</h2>
             <div>
                 Es existiert bereits eine Datei an der Stelle <span class="filepath">[[path]]</span>.
-                <div id="files">
+                <div id="files" previewed$="[[_previewed]]">
                     <div class="file new">
                         <span>Neu</span>
-                        <file-view name="[[name]]" icon="fileicon.svg"></file-view>
+                        <file-view name="[[newName]]" icon="fileicon.svg"></file-view>
                     </div>
                     <div class="file old">
                         <span>Alt</span>
-                        <file-view name="[[name]]" icon="fileicon_original.svg"></file-view>
+                        <file-view name="[[oldName]]" icon="fileicon_original.svg"></file-view>
                     </div>
                 </div>
             </div>
-            <div class="buttons">
+            <div class="buttons" previewed$="[[_previewed]]">
                 <paper-button id="rename">Anderen Namen wählen</paper-button>
                 <paper-button id="both">Beide behalten</paper-button>
                 <paper-button id="replace">Alte Datei überschreiben</paper-button>
@@ -106,20 +148,69 @@
     <script>
         "use strict";
 
-        Polymer({
-            is: "save-dialog",
+        (function() {
+            Polymer({
+                is: "save-dialog",
 
-            properties: {
-                path: {
-                    type: String
+                properties: {
+                    path: {
+                        type: String
+                    },
+
+                    oldCreated: {
+                        type: String
+                    },
+
+                    _previewed: {
+                        type: String,
+                        value: null
+                    },
+
+                    name: {
+                        computed: "_computeName(path)"
+                    },
+
+                    newName: {
+                        computed: "_computeNewName(name, _previewed)"
+                    },
+
+                    oldName: {
+                        computed: "_computeOldName(name, _previewed, oldCreated)"
+                    }
                 },
 
-                name: {
-                    computed: "_computeName(path)"
-                }
-            },
+                attached() {
+                    ["rename", "both", "replace", "cancel"].forEach(button => {
+                        this.listen(this.$[button], "mouseover", "_onMouseOver");
+                        this.listen(this.$[button], "mouseout", "_onMouseOut");
+                    });
+                },
 
-            _computeName: path => path.slice(path.lastIndexOf("/") + 1)
-        });
+                _computeName: path => {
+                    const raw = path.slice(path.lastIndexOf("/") + 1);
+                    const dotPos = raw.lastIndexOf(".");
+
+                    return {
+                        raw,
+                        prefix: dotPos < 0 ? raw: raw.slice(0, dotPos),
+                        suffix: dotPos < 0 ? "" : raw.slice(dotPos + 1)
+                    };
+                },
+
+                _computeNewName: (name, previewed) => previewed !== "rename" ? previewed !== "cancel" ? name.raw : "ungesichert" : "",
+                _computeOldName: (name, previewed, oldCreated) => previewed !== "both"
+                    ? name.raw
+                    : `${name.prefix} Version vom ${oldCreated}.${name.suffix}`,
+
+                _onMouseOver(event) {
+                    this._previewed = event.target.id;
+                },
+
+                _onMouseOut(event) {
+                    if(event.target.id === this._previewed)
+                        this._previewed = null;
+                }
+            });
+        }());
     </script>
 </dom-module>
