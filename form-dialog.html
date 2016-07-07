@@ -1,0 +1,164 @@
+<link rel="import" href="bower_components/polymer/polymer.html">
+<link rel="import" href="bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="bower_components/paper-button/paper-button.html">
+<link rel="import" href="bower_components/paper-input/paper-input.html">
+<link rel="import" href="bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="bower_components/paper-item/paper-item.html">
+
+<link rel="import" href="bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="bower_components/iron-icons/social-icons.html">
+
+<link rel="import" href="collapse.html">
+
+<dom-module id="form-dialog">
+    <template>
+        <style>
+            * {
+                box-sizing: border-box;
+            }
+
+            :host {
+                cursor: default;
+                --violet: #9b59b6;
+                --green: #1abb47;
+                --blue: #1a33bc;
+                --red: #bb241a;
+            }
+
+            #dialog {
+                border-radius: 2px;
+                overflow: hidden;
+				width: 500px;
+            }
+
+			h2 {
+				text-align: center;
+			}
+
+            paper-button iron-icon {
+                margin-right: 5px;
+            }
+
+			#add {
+				color: var(--green);
+			}
+
+			#cancel {
+				color: var(--red);
+			}
+
+			div.group {
+				display: flex;
+			}
+
+			div.group > * {
+				margin: 0 4px;
+				flex: 1;
+				flex-shrink: 2;
+			}
+
+			div.group > *:first-child {
+				margin-left: 0;
+			}
+
+			div.group > *:last-child {
+				margin-right: 0;
+			}
+
+			div.group > .medium {
+				flex: 2;
+			}
+
+			div.group > .big {
+				flex: 3;
+			}
+
+			[hidden] {
+				display: none;
+			}
+
+			div.data {
+				margin: 0;
+			}
+
+			form-collapse:not(:last-child) {
+				margin-bottom: 16px;
+			}
+        </style>
+
+        <paper-dialog id="dialog" opened modal>
+            <h2>Neuer Benuter</h2>
+			<div class="data group">
+				<paper-input label="User ID" value="12345" disabled></paper-input>
+				<paper-input label="One Time Password" value="xy987" disabled></paper-input>
+			</div>
+            <paper-dialog-scrollable>
+				<form-collapse label="Benutzerdaten" name="user" opened="{{opened}}">
+					<paper-input label="Login-Name" allowed-pattern="[A-Za-z0-9_-]" maxlength="10"></paper-input>
+	            	<div class="group">
+	            		<paper-input label="Vorname"></paper-input>
+						<paper-input label="Nachname"></paper-input>
+	            	</div>
+					<div class="group">
+						<paper-input label="Straße" class="big"></paper-input>
+						<paper-input label="Hausnr."></paper-input>
+					</div>
+					<div class="group">
+						<paper-input label="PLZ" allowed-pattern="[0-9]" value="33098"></paper-input>
+						<paper-input label="Ort" class="big" value="Paderborn"></paper-input>
+					</div>
+					<paper-input label="Telefon" value="49">
+						<div prefix>+&nbsp;</div>
+					</paper-input>
+					<div class="group">
+						<paper-dropdown-menu label="Status">
+							<paper-listbox class="dropdown-content" selected="{{selected}}">
+								<paper-item>Student</paper-item>
+								<paper-item>Professor</paper-item>
+								<paper-item>Mitarbeiter</paper-item>
+							</paper-listbox>
+						</paper-dropdown-menu>
+						<paper-input label="Matrikelnr." allowed-pattern="[0-9]" class="medium" hidden$="[[!isStudent(selected)]]"></paper-input>
+						<paper-input label="Semester" type="number" min="1" max="100" allowed-pattern="[0-9]" hidden$="[[!isStudent(selected)]]"></paper-input>
+						<paper-input label="Büronr." allowed-pattern="[A-Z. 0-9]" class="big" hidden$="[[isStudent(selected)]]"></paper-input>
+					</div>
+				</form-collapse>
+				<form-collapse label="Quota" name="quota" opened="{{opened}}"></form-collapse>
+				<form-collapse label="Zugangsrechte" name="rights" opened="{{opened}}"></form-collapse>
+            </paper-dialog-scrollable>
+            <div class="buttons" previewed$="[[_previewed]]">
+                <paper-button id="cancel"><iron-icon icon="cancel"></iron-icon> Abbrechen</paper-button>
+                <paper-button id="add"><iron-icon icon="social:person-add"></iron-icon> Benutzer anlegen</paper-button>
+            </div>
+        </paper-dialog>
+    </template>
+
+    <script>
+        "use strict";
+
+        Polymer({
+            is: "form-dialog",
+
+			properties: {
+				selected: {
+					value: 0
+				},
+				opened: {
+					observer: "_openedChanged"
+				}
+			},
+
+			isStudent: selected => selected === 0,
+
+			attached() {
+				this.opened = "user";
+			},
+
+			_openedChanged() {
+				setTimeout(() => this.$.dialog.notifyResize(), 300);
+			}
+        });
+    </script>
+</dom-module>

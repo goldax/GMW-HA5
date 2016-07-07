@@ -1,0 +1,64 @@
+<link rel="import" href="bower_components/iron-collapse/iron-collapse.html">
+
+<dom-module id="form-collapse">
+	<template>
+		<style>
+			:host {
+				display: block;
+			}
+
+			div {
+				font-weight: bold;
+				cursor: pointer;
+			}
+
+			div::before {
+				content: '\25B6';
+				margin-right: 8px;
+				font-size: 10px;
+			}
+
+			div[opened]::before {
+				content: '\25BC';
+			}
+
+			iron-collapse {
+				margin: 0 16px;
+			}
+		</style>
+
+		<div on-tap="open" opened$="[[_opened]]">[[label]]</div>
+		<iron-collapse opened="[[_opened]]">
+			<content></content>
+		</iron-collapse>
+	</template>
+
+	<script>
+		Polymer({
+			is: "form-collapse",
+
+			properties: {
+				label: {
+					type: String
+				},
+				name: {
+					type: String
+				},
+				opened: {
+					type: String,
+					notify: true
+				},
+				_opened: {
+					type: Boolean,
+					computed: "_computeOpened(name, opened)"
+				}
+			},
+
+			_computeOpened: (name, opened) => name === opened,
+
+			open() {
+				this.opened = this.name;
+			}
+		})
+	</script>
+</dom-module>
